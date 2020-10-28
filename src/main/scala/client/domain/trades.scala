@@ -2,13 +2,14 @@ package client.domain
 
 import java.time.Instant
 
-import client.domain.events.{OrderId, Price, Quantity, Symbol, TradeId}
+import client.domain.events.{OrderId, Price, Quantity, TradeId}
+import client.domain.symbols.Symbol
 
 
 
 object trades {
 
-  case class trades(eventTime: Instant,
+  case class AggTrade(eventTime: Instant,
                     symbol: Symbol,
                     tradeId: TradeId,
                     price: Price,
