@@ -2,7 +2,7 @@ package client.domain
 
 import client.domain.depths.DepthLevel
 import client.domain.klines.KlineInterval
-import client.domain.symbols.Pair
+import client.domain.symbols.Symbol
 
 sealed trait BinanceWSRequest {
   def streamName: String
@@ -15,19 +15,19 @@ sealed trait SymbolRequest extends BinanceWSRequest {
 object requests {
 
   case class AggTrade(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@aggTrade"
+    def streamName = s"${symbol.value.toLowerCase}@aggTrade"
   }
 
   case class Trade(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@trade"
+    def streamName = s"${symbol.value.toLowerCase}@trade"
   }
 
   case class Kline(symbol: Symbol, interval: KlineInterval) extends SymbolRequest {
-    def streamName = s"$symbol@kline_$interval"
+    def streamName = s"${symbol.value.toLowerCase}@kline_$interval"
   }
 
   case class MiniTicker(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@miniTicker"
+    def streamName = s"${symbol.value.toLowerCase}@miniTicker"
   }
 
   case class AllMiniTicker() extends BinanceWSRequest {
@@ -35,7 +35,7 @@ object requests {
   }
 
   case class SymbolTicker(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@ticker"
+    def streamName = s"${symbol.value.toLowerCase}@ticker"
   }
 
   case class AllSymbolTicker() extends BinanceWSRequest {
@@ -43,7 +43,7 @@ object requests {
   }
 
   case class SymbolBookTicker(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@bookTicker"
+    def streamName = s"${symbol.value.toLowerCase}@bookTicker"
   }
 
   case class AllBookTicker() extends BinanceWSRequest {
@@ -51,10 +51,10 @@ object requests {
   }
 
   case class PartialBookDepth(symbol: Symbol, levels: DepthLevel) extends SymbolRequest {
-    def streamName = s"$symbol@depth$levels"
+    def streamName = s"${symbol.value.toLowerCase}@depth$levels"
   }
 
   case class Depth(symbol: Symbol) extends SymbolRequest {
-    def streamName = s"$symbol@depth"
+    def streamName = s"${symbol.value.toLowerCase}@depth"
   }
 }

@@ -9,7 +9,7 @@ object events {
 
   @newtype case class TradeId(value: Long)
   @newtype case class Price(value: BigDecimal)
-  @newtype case class Quantity(value: String)
+  @newtype case class Quantity(value: BigDecimal)
   @newtype case class OrderId(value: Long)
   @newtype case class AssetVolume(value: BigDecimal)
   @newtype case class UpdateId(value: Long)

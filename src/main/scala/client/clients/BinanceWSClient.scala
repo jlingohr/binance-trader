@@ -5,10 +5,10 @@ import client.algebra.BinanceConnection
 import client.clients.BinanceConnectionLive.buildRequest
 import client.domain.{BinanceWSRequest, Event}
 import fs2.{RaiseThrowable, Stream}
-import io.circe.{Decoder, Json, ParsingFailure, Error}
+import io.circe.parser.parse
+import io.circe.{Decoder, Error, Json, ParsingFailure}
 import org.http4s.Uri
 import org.http4s.client.jdkhttpclient.{WSClient, WSFrame, WSRequest}
-import io.circe.parser.parse
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
@@ -54,7 +54,7 @@ class BinanceConnectionLive[F[_]: Concurrent: Timer: RaiseThrowable](client: WSC
 
 
 object BinanceConnectionLive extends {
-  private val endPoint = Uri.unsafeFromString("wss://stream.binance.com:9443/stream?streams=")
+  private val endPoint = Uri.unsafeFromString("wss://stream.binance.com:9443/ws")
 
   def apply[F[_]: Concurrent: Timer: RaiseThrowable](client: WSClient[F],
                                                      pingInterval: FiniteDuration = 20.second): BinanceConnectionLive[F] = {

@@ -3,9 +3,8 @@ package client.domain
 import java.time.Instant
 
 import client.domain.events.{AssetVolume, Price, Quantity, TradeId}
-import eu.timepit.refined.types.string.NonEmptyString
-import io.estatico.newtype.macros.newtype
 import client.domain.symbols.Symbol
+import io.estatico.newtype.macros.newtype
 
 
 object tickers {
@@ -42,7 +41,7 @@ object tickers {
                          lastTradeId: TradeId,
                          numberOfTrades: Long) extends Event
 
-  @newtype case class OrderBookUpdateId(value: String)
+  @newtype case class OrderBookUpdateId(value: Long)
 
   case class SymbolBookTicker(updateId: OrderBookUpdateId,
                              symbol: Symbol,

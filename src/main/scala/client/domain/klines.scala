@@ -3,8 +3,8 @@ package client.domain
 import java.time.Instant
 
 import client.domain.events.{AssetVolume, Price, TradeId}
-import io.estatico.newtype.macros.newtype
 import client.domain.symbols.Symbol
+import io.estatico.newtype.macros.newtype
 
 
 object klines {

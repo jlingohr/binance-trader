@@ -3,7 +3,7 @@ package client.algebra
 import cats.effect.Resource
 import client.domain.{BinanceWSRequest, Event}
 import fs2.Stream
-import io.circe.{Error}
+import io.circe.Error
 
 
 trait BinanceConnection[F[_]] {
