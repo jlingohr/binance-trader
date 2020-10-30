@@ -1,23 +1,21 @@
 package client
 
-import client.clients.CirceJson
 import org.scalatest.funspec.AnyFunSpec
-import io.circe.parser.parse
 import java.time.Instant
 
-import client.domain.Event
-import client.domain.depths.{Ask, Bid, PartialBookDepth}
-import io.circe._
+import client.clients.websocket.CirceWSJson
+import client.domain.depths.depths.{Ask, Bid, PartialDepthUpdate}
 import io.circe.parser._
-import client.domain.events.{AssetVolume, OrderId, Price, Quantity, TradeId, UpdateId}
-import client.domain.klines.{Kline, KlineEvent, KlineInterval}
+import client.domain.params.{AssetVolume, OrderId, Price, Quantity, TradeId, UpdateId}
+import client.domain.klines.ws.klines.{Kline, KlineEvent, KlineInterval}
 import client.domain.symbols.Symbol
-import client.domain.tickers.{OrderBookUpdateId, SymbolBookTicker, SymbolMiniTicker}
-import client.domain.trades.{AggTrade, Trade}
+import client.domain.ws.Event
+import client.domain.tickers.ws.tickers.{OrderBookUpdateId, SymbolBookTicker, SymbolMiniTicker}
+import client.domain.trades.ws.trades.{AggTrade, Trade}
 import org.scalatest.matchers.should.Matchers
 
 
-class CirceJsonSpec extends AnyFunSpec with Matchers with CirceJson {
+class CirceWSJsonSpec extends AnyFunSpec with Matchers with CirceWSJson {
 
   describe("Testing decoding websocket JSON response") {
     it("Should decode AggTrade") {
@@ -215,13 +213,13 @@ class CirceJsonSpec extends AnyFunSpec with Matchers with CirceJson {
           |}
           |""".stripMargin
 
-      val expected = PartialBookDepth(
+      val expected = PartialDepthUpdate(
         UpdateId(160),
         Seq(Bid(Price(BigDecimal("0.0024")), Quantity(BigDecimal("10")))),
         Seq(Ask(Price(BigDecimal("0.0026")), Quantity(BigDecimal("100"))))
       )
 
-      decode[PartialBookDepth](raw).map(_ shouldEqual expected)
+      decode[PartialDepthUpdate](raw).map(_ shouldEqual expected)
     }
 
     it("Should decode PartialDepth with multiple bids and asks") {
@@ -254,13 +252,13 @@ class CirceJsonSpec extends AnyFunSpec with Matchers with CirceJson {
 
       val bid = Bid(Price(BigDecimal("0.0024")), Quantity(BigDecimal("10")))
       val ask = Ask(Price(BigDecimal("0.0026")), Quantity(BigDecimal("100")))
-      val expected = PartialBookDepth(
+      val expected = PartialDepthUpdate(
         UpdateId(160),
         Seq(bid, bid),
         Seq(ask, ask)
       )
 
-      decode[PartialBookDepth](raw).map(x => x shouldEqual expected)
+      decode[PartialDepthUpdate](raw).map(x => x shouldEqual expected)
     }
 
 

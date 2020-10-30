@@ -1,7 +1,7 @@
 package client.algebra
 
 import cats.effect.Resource
-import client.domain.{BinanceWSRequest, Event}
+import client.domain.ws.{BinanceWSRequest, Event}
 import fs2.Stream
 import io.circe.Error
 

@@ -1,9 +1,9 @@
-package client.clients
+package client.clients.websocket
 
 import cats.effect.{Concurrent, Resource, Timer}
 import client.algebra.BinanceConnection
-import client.clients.BinanceConnectionLive.buildRequest
-import client.domain.{BinanceWSRequest, Event}
+import client.clients.websocket.BinanceConnectionLive.buildRequest
+import client.domain.ws.{BinanceWSRequest, Event}
 import fs2.{RaiseThrowable, Stream}
 import io.circe.parser.parse
 import io.circe.{Decoder, Error, Json, ParsingFailure}
@@ -15,7 +15,7 @@ import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 class BinanceConnectionLive[F[_]: Concurrent: Timer: RaiseThrowable](client: WSClient[F],
                                                                      pingInterval: FiniteDuration)
-  extends BinanceConnection[F] with CirceJson {
+  extends BinanceConnection[F] with CirceWSJson {
 
   override def connect(requests: Set[BinanceWSRequest]): Resource[F, Stream[F, Either[Error, Event]]] = {
     val request = buildRequest(requests)

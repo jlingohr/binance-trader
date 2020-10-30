@@ -1,7 +1,7 @@
-package client.domain
+package client.domain.ws
 
-import client.domain.depths.DepthLevel
-import client.domain.klines.KlineInterval
+import client.domain.depths.depths.DepthLevel
+import client.domain.klines.ws.klines.KlineInterval
 import client.domain.symbols.Symbol
 
 sealed trait BinanceWSRequest {

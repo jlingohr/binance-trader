@@ -1,20 +1,8 @@
-package client.domain
+package client.domain.ws
 
 import enumeratum.{CirceEnum, Enum, EnumEntry}
-import io.estatico.newtype.macros.newtype
 
 trait Event
-
-object events {
-
-  @newtype case class TradeId(value: Long)
-  @newtype case class Price(value: BigDecimal)
-  @newtype case class Quantity(value: BigDecimal)
-  @newtype case class OrderId(value: Long)
-  @newtype case class AssetVolume(value: BigDecimal)
-  @newtype case class UpdateId(value: Long)
-
-}
 
 sealed abstract class EventCategory(override val entryName: String) extends EnumEntry
 

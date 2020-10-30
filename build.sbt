@@ -33,10 +33,6 @@ libraryDependencies ++= Seq(
   "io.estatico" %% "newtype" % newtypeVersion,
   "eu.timepit" %% "refined" % refinedVersion,
 
-  // Akka
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-
   // http4s client
   "org.http4s" %% "http4s-circe"           % http4sVersion,
   "org.http4s" %% "http4s-jdk-http-client" % http4sJdkVersion,

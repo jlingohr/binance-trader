@@ -5,18 +5,20 @@ import java.net.http.HttpClient.Version
 import java.time.Duration
 
 import cats.effect.IO
-import client.clients.BinanceConnectionLive
-import client.domain.{BinanceWSRequest, Event, depths, tickers, trades}
-import client.domain.requests.{AggTrade, Kline, MiniTicker, PartialBookDepth, SymbolBookTicker, SymbolTicker, Trade}
-import org.http4s.client.jdkhttpclient.{JdkWSClient, WSClient}
+import client.clients.websocket.BinanceConnectionLive
+import client.domain.depths.depths
+import client.domain.depths.depths.DepthLevel
+import client.domain.klines.ws.klines.{KlineEvent, KlineInterval}
+import client.domain.symbols.Symbol
+import client.domain.tickers.ws.tickers
+import client.domain.tickers.ws.tickers.SymbolMiniTicker
+import client.domain.trades.ws.trades
+import client.domain.ws.requests._
+import client.domain.ws.{BinanceWSRequest, Event}
+import io.circe.Error
+import org.http4s.client.jdkhttpclient.JdkWSClient
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
-import io.circe.Error
-import cats.effect.{ContextShift, IO, Timer}
-import client.domain.depths.DepthLevel
-import client.domain.klines.{KlineEvent, KlineInterval}
-import client.domain.symbols.Symbol
-import client.domain.tickers.SymbolMiniTicker
 
 import scala.concurrent.ExecutionContext
 
@@ -97,7 +99,7 @@ class BinanceWSClientSpec
 
     it("Should deserialize DepthUpdate") {
       val result =
-        makeRequest(PartialBookDepth(symbol, DepthLevel(5)), { case Right(event: depths.PartialBookDepth) => event})
+        makeRequest(PartialBookDepth(symbol, DepthLevel(5)), { case Right(event: depths.PartialDepthUpdate) => event})
 
       result.size shouldBe 2
     }

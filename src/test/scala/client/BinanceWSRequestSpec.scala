@@ -1,12 +1,11 @@
 package client
 
-import client.domain.depths.DepthLevel
-import client.domain.klines.KlineInterval
-import client.domain.requests.{AggTrade, Depth, Kline, MiniTicker, PartialBookDepth, SymbolBookTicker, SymbolTicker, Trade}
+import client.domain.depths.depths.DepthLevel
+import client.domain.klines.ws.klines.KlineInterval
+import client.domain.ws.requests.{AggTrade, Depth, Kline, MiniTicker, PartialBookDepth, SymbolBookTicker, SymbolTicker, Trade}
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import client.domain.symbols.Symbol
-import client.domain.tickers.SymbolMiniTicker
 
 class BinanceWSRequestSpec extends AnyFunSpec with Matchers {
 
