@@ -33,7 +33,11 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
     Uri
       .fromString(baseEndpoint + api + "/depth")
       .liftTo[F]
-      .map(_.withQueryParam("limit", limit.value))
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+          .withQueryParam("limit", limit.value)
+      }
       .flatMap { uri =>
         client.get[PartialDepthUpdate](uri) { r =>
           if (r.status == Status.Ok || r.status == Status.Conflict) {
@@ -50,7 +54,11 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
                       limit: Option[Int]): F[Seq[Trade]] =
     Uri.fromString(baseEndpoint + api + "/trades")
       .liftTo[F]
-      .map(_.withOptionQueryParam("limit", limit))
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+          .withOptionQueryParam("limit", limit)
+      }
       .flatMap { uri =>
         client.get[Seq[Trade]](uri) { r =>
           if (r.status == Status.Ok || r.status == Status.Conflict) {
