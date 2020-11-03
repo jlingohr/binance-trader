@@ -32,7 +32,7 @@ trait MarketClient[F[_]] extends BinanceRest[F] {
              interval: KlineInterval,
              startTime: Option[Instant],
              endTime: Option[Instant],
-             limit: Option[Int]): F[Seq[Kline]]
+             limit: Int = 500): F[Seq[Kline]]
 
   def avgPrice(symbol: Symbol): F[AveragePrice]
 }

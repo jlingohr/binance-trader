@@ -7,9 +7,9 @@ import client.domain.depths.http.DepthLimit
 import client.domain.depths.depths._
 import client.domain.depths.http.DepthLimit._
 import client.domain.trades.http.trades._
+import client.domain.klines.http.klines._
 import client.domain.http.BinanceResponse
 import client.domain.klines.KlineInterval
-import client.domain.klines.http.klines._
 import client.domain.{params, symbols}
 import client.domain.AveragePrice
 import client.clients.rest.client.CirceHttpJson
@@ -33,11 +33,7 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
     Uri
       .fromString(baseEndpoint + api + "/depth")
       .liftTo[F]
-      .map { uri =>
-        uri
-          .withQueryParam("symbol", symbol.value)
-          .withQueryParam("limit", limit.value)
-      }
+      .map(_.withQueryParam("limit", limit.value))
       .flatMap { uri =>
         client.get[PartialDepthUpdate](uri) { r =>
           if (r.status == Status.Ok || r.status == Status.Conflict) {
@@ -54,11 +50,7 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
                       limit: Option[Int]): F[Seq[Trade]] =
     Uri.fromString(baseEndpoint + api + "/trades")
       .liftTo[F]
-      .map { uri =>
-        uri
-          .withQueryParam("symbol", symbol.value)
-          .withOptionQueryParam("limit", limit)
-      }
+      .map(_.withOptionQueryParam("limit", limit))
       .flatMap { uri =>
         client.get[Seq[Trade]](uri) { r =>
           if (r.status == Status.Ok || r.status == Status.Conflict) {
@@ -84,7 +76,6 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
       .liftTo[F]
       .map { uri =>
         uri
-          .withQueryParam("symbol", symbol.value)
           .withOptionQueryParam("fromId", fromId.map(_.value))
           .withOptionQueryParam("startTime", startTime.map(_.toEpochMilli))
           .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
@@ -106,16 +97,16 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
                       interval: KlineInterval,
                       startTime: Option[Instant],
                       endTime: Option[Instant],
-                      limit: Option[Int]): F[Seq[Kline]] =
+                      limit: Int = 500): F[Seq[Kline]] =
     Uri.fromString(baseEndpoint + api + "/klines")
       .liftTo[F]
       .map { uri =>
         uri
           .withQueryParam("symbol", symbol.value)
-          .withQueryParam("interval", interval)
+          .withQueryParam("interval", interval.value)
           .withOptionQueryParam("startTime", startTime.map(_.toEpochMilli))
           .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
-          .withOptionQueryParam("limit", limit)
+          .withQueryParam("limit", limit)
       }
       .flatMap { uri =>
         client.get[Seq[Kline]](uri) { r =>
@@ -132,6 +123,10 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
   override def avgPrice(symbol: symbols.Symbol): F[AveragePrice] =
     Uri.fromString(baseEndpoint + api + "/avgPrice")
       .liftTo[F]
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+      }
       .flatMap { uri =>
         client.get[AveragePrice](uri) { r =>
           if (r.status == Status.Ok || r.status == Status.Conflict) {

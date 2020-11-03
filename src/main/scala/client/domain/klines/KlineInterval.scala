@@ -2,7 +2,7 @@ package client.domain.klines
 
 import enumeratum.{CirceEnum, EnumEntry, Enum}
 
-sealed abstract class KlineInterval(value: String) extends EnumEntry
+sealed abstract class KlineInterval(val value: String) extends EnumEntry
 
 object KlineInterval extends Enum[KlineInterval] with CirceEnum[KlineInterval] {
 
