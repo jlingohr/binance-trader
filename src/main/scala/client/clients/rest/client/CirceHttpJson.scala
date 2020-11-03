@@ -1,4 +1,4 @@
-package client.clients.http
+package client.clients.rest.client
 
 import client.clients.CirceJson
 import client.domain.AveragePrice
@@ -7,12 +7,12 @@ import client.domain.depths.depths.{Ask, Bid, PartialDepthUpdate}
 import client.domain.http.RateLimiter
 import client.domain.klines.http.klines.Kline
 import client.domain.orders.http.OCOOrderResponse.{CancelOCO, OCODetail, OCOOrder, OCOReport}
-import client.domain.orders.http.OrderResponse.{CancelOrder, CommissionAsset, Fill, OpenOrder, Order, OrderAck, OrderFull, OrderListId, Result}
-import client.domain.params.{Price, Quantity, UpdateId}
+import client.domain.orders.http.OrderResponse._
+import client.domain.params.UpdateId
 import client.domain.tickers.http.tickers.{BookTicker, Ticker24Hr, TickerPrice}
 import client.domain.trades.http.trades.{AggTrade, Trade}
+import io.circe.generic.semiauto.deriveDecoder
 import io.circe.{Decoder, HCursor}
-import io.circe.generic.semiauto._
 
 trait CirceHttpJson extends CirceJson {
 

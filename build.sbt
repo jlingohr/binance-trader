@@ -34,6 +34,8 @@ libraryDependencies ++= Seq(
   "eu.timepit" %% "refined" % refinedVersion,
 
   // http4s client
+  "org.http4s" %% "http4s-dsl" % http4sVersion,
+  "org.http4s" %% "http4s-blaze-client" % http4sVersion,
   "org.http4s" %% "http4s-circe"           % http4sVersion,
   "org.http4s" %% "http4s-jdk-http-client" % http4sJdkVersion,
 
