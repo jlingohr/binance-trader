@@ -19,6 +19,8 @@ val circeFs2Version = "0.12.0"
 val mockitoVersion = "1.10.4"
 val scalatestVersion = "3.1.0"
 val refinedVersion = "0.9.17"
+val sttpVersion = "3.0.0-RC7"
+val tsecVersion = "0.2.0-M2"
 
 libraryDependencies ++= Seq(
   compilerPlugin(
@@ -33,7 +35,11 @@ libraryDependencies ++= Seq(
   "io.estatico" %% "newtype" % newtypeVersion,
   "eu.timepit" %% "refined" % refinedVersion,
 
-  // http4s client
+  //sttp
+//  "com.softwaremill.sttp.client3" %% "core" % sttpVersion,
+//  "com.softwaremill.sttp.client3" %% "circe" % sttpVersion,
+
+// http4s client
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "org.http4s" %% "http4s-blaze-client" % http4sVersion,
   "org.http4s" %% "http4s-circe"           % http4sVersion,
@@ -62,6 +68,9 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-fs2"            % circeFs2Version,
   "eu.timepit" %% "refined"            % refinedVersion,
   "eu.timepit" %% "refined-cats"       % refinedVersion,
+
+  // authentication
+  "io.github.jmcardon" %% "tsec-mac" % tsecVersion,
 
   // testing
   "org.scalactic" %% "scalactic"               % scalatestVersion,

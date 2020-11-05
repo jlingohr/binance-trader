@@ -1,22 +1,15 @@
 package client.clients.rest.client.interpreter
 
+import cats.implicits._
 import client.clients.rest.BinanceRest
 import client.clients.rest.client.{CirceHttpJson, TickerClient}
-import client.domain.http.BinanceResponse
-import client.domain.tickers.http.tickers._
 import client.domain.symbols
+import client.domain.tickers.http.tickers._
 import client.effects.effects.MonadThrow
+import org.http4s.circe.{JsonDecoder, _}
+import org.http4s.client.Client
+import org.http4s.dsl.Http4sDsl
 import org.http4s.{Status, Uri}
-import org.http4s.circe.JsonDecoder
-import org.http4s.client.Client
-import org.http4s.dsl.Http4sDsl
-import client.effects.effects.MonadThrow
-import org.http4s.circe.JsonDecoder
-import org.http4s.client.Client
-import org.http4s.dsl.Http4sDsl
-import org.http4s._
-import cats.implicits._
-import org.http4s.circe._
 
 class LiveTickerClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
   extends TickerClient[F]
