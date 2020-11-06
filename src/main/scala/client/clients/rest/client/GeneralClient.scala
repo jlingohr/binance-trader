@@ -1,13 +1,13 @@
 package client.clients.rest.client
 
-import client.domain.http.BinanceResponse
+import client.domain.http.response
 
 trait GeneralClient[F[_]] {
 
-  def ping: F[BinanceResponse]
+  def ping: F[response]
 
-  def time: F[BinanceResponse]
+  def time: F[response]
 
-  def exchangeInfo: F[BinanceResponse]
+  def exchangeInfo: F[response]
 
 }

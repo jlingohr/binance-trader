@@ -2,102 +2,68 @@ package client.clients.rest.client.interpreter
 
 import java.time.Instant
 
-import client.clients.rest.client.MarketClient
-import client.domain.depths.http.DepthLimit
+import cats.effect.Sync
+import client.clients.rest.BinanceRestEndpoint
+import client.clients.rest.client.{CirceHttpJson, MarketClient}
 import client.domain.depths.depths._
-import client.domain.depths.http.DepthLimit._
-import client.domain.trades.http.trades._
-import client.domain.klines.http.klines._
-import client.domain.http.BinanceResponse
+import client.domain.depths.http.DepthLimit
+import client.domain.depths.http.DepthLimit.Depth100
+import client.domain.http.response
+import client.domain.http.response.{BinanceResponse, Result}
 import client.domain.klines.KlineInterval
-import client.domain.{params, symbols}
-import client.domain.AveragePrice
-import client.clients.rest.client.CirceHttpJson
-import client.effects.effects.MonadThrow
+import client.domain.klines.http.klines._
+import client.domain.trades.http.trades._
+import client.domain.{AveragePrice, params, symbols}
+import org.http4s.Uri
 import org.http4s.circe.JsonDecoder
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import org.http4s._
+import client.effects.effects.MonadThrow
 import cats.implicits._
-import org.http4s.circe._
 
-import scala.util.control.NoStackTrace
+class LiveMarketClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
+  extends MarketClient[F]
+    with Http4sDsl[F]
+    with CirceHttpJson {
 
-case class BinanceResponseError(cause: String) extends NoStackTrace
-
-class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
-  extends MarketClient[F] with Http4sDsl[F] with CirceHttpJson {
+  import MarketClientRequests._
 
   override def depth(symbol: symbols.Symbol,
-                     limit: DepthLimit = Depth100): F[PartialDepthUpdate] =
-    Uri
-      .fromString(baseEndpoint + api + "/depth")
+                     limit: DepthLimit): F[response.BinanceResponse[Result[PartialDepthUpdate]]] = {
+    depthRequest(symbol, limit)
       .liftTo[F]
-      .map { uri =>
-        uri
-          .withQueryParam("symbol", symbol.value)
-          .withQueryParam("limit", limit.value)
-      }
       .flatMap { uri =>
-        client.get[PartialDepthUpdate](uri) { r =>
-          if (r.status == Status.Ok || r.status == Status.Conflict) {
-            r.asJsonDecode[PartialDepthUpdate]
-          } else {
-            BinanceResponseError(
-              Option(r.status.reason).getOrElse("Unknown")
-            ).raiseError[F, PartialDepthUpdate]
-          }
+        client.get(uri) { r =>
+          BinanceResponse.create[F, PartialDepthUpdate](r)
         }
       }
 
+  }
+
   override def trades(symbol: symbols.Symbol,
-                      limit: Option[Int]): F[Seq[Trade]] =
-    Uri.fromString(baseEndpoint + api + "/trades")
+                      limit: Option[Int]): F[response.BinanceResponse[Result[Seq[Trade]]]] =
+    tradesRequest(symbol, limit)
       .liftTo[F]
-      .map { uri =>
-        uri
-          .withQueryParam("symbol", symbol.value)
-          .withOptionQueryParam("limit", limit)
-      }
       .flatMap { uri =>
-        client.get[Seq[Trade]](uri) { r =>
-          if (r.status == Status.Ok || r.status == Status.Conflict) {
-            r.asJsonDecode[Seq[Trade]]
-          } else {
-            BinanceResponseError(
-              Option(r.status.reason).getOrElse("Unknown")
-            ).raiseError[F, Seq[Trade]]
-          }
+        client.get(uri) { r =>
+          BinanceResponse.create[F, Seq[Trade]](r)
         }
       }
 
   override def historicalTrades(symbol: symbols.Symbol,
                                 limit: Option[Int],
-                                fromId: Option[params.TradeId]): F[BinanceResponse] = ???
+                                fromId: Option[params.TradeId]): F[response.BinanceResponse[Result[Trade]]] = ???
 
   override def aggTrades(symbol: symbols.Symbol,
                          fromId: Option[params.TradeId],
                          startTime: Option[Instant],
                          endTime: Option[Instant],
-                         limit: Option[Int]): F[Seq[AggTrade]] =
-    Uri.fromString(baseEndpoint + api + "/aggTrades")
+                         limit: Option[Int]): F[response.BinanceResponse[Result[Seq[AggTrade]]]] =
+    aggTradesRequest(symbol, fromId, startTime, endTime, limit)
       .liftTo[F]
-      .map { uri =>
-        uri
-          .withOptionQueryParam("fromId", fromId.map(_.value))
-          .withOptionQueryParam("startTime", startTime.map(_.toEpochMilli))
-          .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
-          .withOptionQueryParam("limit", limit)
-      }
       .flatMap { uri =>
-        client.get[Seq[AggTrade]](uri) { r =>
-          if (r.status == Status.Ok || r.status == Status.Conflict) {
-            r.asJsonDecode[Seq[AggTrade]]
-          } else {
-            BinanceResponseError(
-              Option(r.status.reason).getOrElse("Unknown")
-            ).raiseError[F, Seq[AggTrade]]
-          }
+        client.get(uri) { r =>
+          BinanceResponse.create[F, Seq[AggTrade]](r)
         }
       }
 
@@ -105,9 +71,71 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
                       interval: KlineInterval,
                       startTime: Option[Instant],
                       endTime: Option[Instant],
-                      limit: Int = 500): F[Seq[Kline]] =
-    Uri.fromString(baseEndpoint + api + "/klines")
+                      limit: Int): F[response.BinanceResponse[Result[Seq[Kline]]]] =
+    klinesRequest(symbol, interval, startTime, endTime, limit)
       .liftTo[F]
+      .flatMap { uri =>
+        client.get(uri) { r =>
+          BinanceResponse.create[F, Seq[Kline]](r)
+        }
+      }
+
+  override def avgPrice(symbol: symbols.Symbol): F[response.BinanceResponse[Result[AveragePrice]]] =
+    avgPriceRequest(symbol)
+      .liftTo[F]
+      .flatMap {uri =>
+        client.get(uri) { r =>
+          BinanceResponse.create[F, AveragePrice](r)
+        }
+      }
+}
+
+object MarketClientRequests extends BinanceRestEndpoint {
+
+  def depthRequest(symbol: symbols.Symbol,
+            limit: DepthLimit = Depth100) =
+    Uri
+      .fromString(baseEndpoint + api + "/depth")
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+          .withQueryParam("limit", limit.value)
+      }
+
+  def tradesRequest(symbol: symbols.Symbol,
+             limit: Option[Int]) =
+    Uri.fromString(baseEndpoint + api + "/trades")
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+          .withOptionQueryParam("limit", limit)
+      }
+
+  def historicalTradesRequest(symbol: symbols.Symbol,
+                       limit: Option[Int],
+                       fromId: Option[params.TradeId]) = ???
+
+  def aggTradesRequest(symbol: symbols.Symbol,
+                fromId: Option[params.TradeId],
+                startTime: Option[Instant],
+                endTime: Option[Instant],
+                limit: Option[Int]) =
+    Uri.fromString(baseEndpoint + api + "/aggTrades")
+      .map { uri =>
+        uri
+          .withQueryParam("symbol", symbol.value)
+          .withOptionQueryParam("fromId", fromId.map(_.value))
+          .withOptionQueryParam("startTime", startTime.map(_.toEpochMilli))
+          .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
+          .withOptionQueryParam("limit", limit)
+      }
+
+  def klinesRequest(symbol: symbols.Symbol,
+             interval: KlineInterval,
+             startTime: Option[Instant],
+             endTime: Option[Instant],
+             limit: Int = 500) =
+    Uri.fromString(baseEndpoint + api + "/klines")
       .map { uri =>
         uri
           .withQueryParam("symbol", symbol.value)
@@ -116,34 +144,11 @@ class LiveMarketClient[F[_]: JsonDecoder: MonadThrow](client: Client[F])
           .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
           .withQueryParam("limit", limit)
       }
-      .flatMap { uri =>
-        client.get[Seq[Kline]](uri) { r =>
-          if (r.status == Status.Ok || r.status == Status.Conflict) {
-            r.asJsonDecode[Seq[Kline]]
-          } else {
-            BinanceResponseError(
-              Option(r.status.reason).getOrElse("Unknown")
-            ).raiseError[F, Seq[Kline]]
-          }
-        }
-      }
 
-  override def avgPrice(symbol: symbols.Symbol): F[AveragePrice] =
+  def avgPriceRequest(symbol: symbols.Symbol) =
     Uri.fromString(baseEndpoint + api + "/avgPrice")
-      .liftTo[F]
       .map { uri =>
         uri
           .withQueryParam("symbol", symbol.value)
-      }
-      .flatMap { uri =>
-        client.get[AveragePrice](uri) { r =>
-          if (r.status == Status.Ok || r.status == Status.Conflict) {
-            r.asJsonDecode[AveragePrice]
-          } else {
-            BinanceResponseError(
-              Option(r.status.reason).getOrElse("Unknown")
-            ).raiseError[F, AveragePrice]
-          }
-        }
       }
 }

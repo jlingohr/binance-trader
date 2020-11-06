@@ -6,14 +6,14 @@ import org.http4s.{Request, Uri}
 import tsec.common._
 import tsec.mac.jca.{HMACSHA256, MacSigningKey}
 
-trait SecurityService[F[_]] {
+trait SecurityService {
 
   def sign(uri: Uri): Uri
   def putHeader(uri: Uri): Uri
 
 }
 
-class LiveSecurityService[F[_]](credentials: Credentials, signedUri: Uri) extends SecurityService[F] {
+class LiveSecurityService(credentials: Credentials, signedUri: Uri) extends SecurityService {
 
   private val header = "X-MBX-APIKEY"
 
@@ -27,11 +27,11 @@ class LiveSecurityService[F[_]](credentials: Credentials, signedUri: Uri) extend
 }
 
 object LiveSecurityService {
-  def apply[F[_]](credentials: Credentials): Request[F] => Either[Throwable, LiveSecurityService[F]] = (request: Request[F]) => {
+  def apply[F[_]](credentials: Credentials): Request[F] => Either[Throwable, LiveSecurityService] = (request: Request[F]) => {
     val signingKey = HMACSHA256.buildKey[Id](credentials.secret.asciiBytes)
     sign(request.queryString, signingKey)
       .map(signature => request.uri.withQueryParam("signature", signature))
-      .map(uri => new LiveSecurityService[F](credentials, uri))
+      .map(uri => new LiveSecurityService(credentials, uri))
   }
 
   def sign(plainText: String, signingKey: MacSigningKey[HMACSHA256]) =

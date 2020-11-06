@@ -1,15 +1,16 @@
 package client.clients.rest.client
 
-import client.domain.http.BinanceResponse
+import client.domain.http.response
+import client.domain.http.response.{BinanceResponse, Result}
 import client.domain.symbols.Symbol
 import client.domain.tickers.http.tickers.{BookTicker, Ticker24Hr, TickerPrice}
 
 trait TickerClient[F[_]] {
 
-  def ticker24(symbol: Symbol): F[Ticker24Hr]
+  def ticker24(symbol: Symbol): F[BinanceResponse[Result[Ticker24Hr]]]
 
-  def price(symbol: Symbol): F[TickerPrice]
+  def price(symbol: Symbol): F[BinanceResponse[Result[TickerPrice]]]
 
-  def bookTicker(symbol: Symbol): F[BookTicker]
+  def bookTicker(symbol: Symbol): F[BinanceResponse[Result[BookTicker]]]
 
 }

@@ -1,10 +1,12 @@
 package client.clients.rest.client
 
+import cats.Show
 import client.clients.CirceJson
 import client.domain.AveragePrice
 import client.domain.account.http.Account.{AccountType, Balance, Permission}
 import client.domain.depths.depths.{Ask, Bid, PartialDepthUpdate}
 import client.domain.http.RateLimiter
+import client.domain.http.response.BinanceResponseError
 import client.domain.klines.http.klines.Kline
 import client.domain.orders.http.OCOOrderResponse.{CancelOCO, OCODetail, OCOOrder, OCOReport}
 import client.domain.orders.http.OrderResponse._
@@ -15,6 +17,12 @@ import io.circe.generic.semiauto.deriveDecoder
 import io.circe.{Decoder, HCursor}
 
 trait CirceHttpJson extends CirceJson {
+
+  implicit val binanceErrorDecoder: Decoder[BinanceResponseError] = Decoder.forProduct3(
+    "code",
+    "msg",
+    "dsc"
+  )(BinanceResponseError.apply)
 
   implicit val orderListIdDecoder: Decoder[OrderListId] = Decoder[Long].map(OrderListId.apply)
 
