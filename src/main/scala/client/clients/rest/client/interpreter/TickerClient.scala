@@ -49,6 +49,13 @@ class LiveTickerClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
       }
 }
 
+object LiveTickerClient {
+  def make[F[_]: Sync](client: Client[F]): F[TickerClient[F]] =
+    Sync[F].delay(
+      new LiveTickerClient[F](client)
+    )
+}
+
 object TickerClientRequests extends BinanceRestEndpoint{
 
   def ticker24Request(symbol: symbols.Symbol) =

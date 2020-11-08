@@ -126,6 +126,13 @@ class LiveOCOClient[F[_]: Sync: JsonDecoder: MonadThrow] (client: Client[F], sec
       }
 }
 
+object LiveOCOClient {
+  def make[F[_]: Sync](client: Client[F], securityService: SecurityService): F[OCOClient[F]] =
+    Sync[F].delay(
+      new LiveOCOClient[F](client, securityService)
+    )
+}
+
 object OCOClientRequests extends BinanceRestEndpoint {
 
   import client.clients.rest.client.QueryParams.QueryEncoder._

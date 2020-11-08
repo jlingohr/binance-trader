@@ -55,6 +55,13 @@ class LiveAccountClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F], 
       }
 }
 
+object LiveAccountClient {
+  def make[F[_]: Sync](client: Client[F], securityService: SecurityService): F[AccountClient[F]] =
+    Sync[F].delay(
+      new LiveAccountClient[F](client, securityService)
+    )
+}
+
 object AccountClientRequests extends BinanceRestEndpoint {
 
   import client.clients.rest.client.QueryParams.QueryEncoder._

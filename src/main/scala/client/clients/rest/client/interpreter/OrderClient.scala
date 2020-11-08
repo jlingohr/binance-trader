@@ -132,6 +132,13 @@ class LiveOrderClient[F[_]: Sync: JsonDecoder: MonadThrow] (client: Client[F], s
       }
 }
 
+object LiveOrderClient {
+  def make[F[_]: Sync](client: Client[F], securityService: SecurityService): F[OrderClient[F]] =
+    Sync[F].delay(
+      new LiveOrderClient[F](client, securityService)
+    )
+}
+
 object OrderClientRequests extends BinanceRestEndpoint {
 
   import client.clients.rest.client.QueryParams.QueryEncoder._

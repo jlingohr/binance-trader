@@ -90,6 +90,13 @@ class LiveMarketClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
       }
 }
 
+object LiveMarketClient {
+  def make[F[_]: Sync](client: Client[F]): F[MarketClient[F]] =
+    Sync[F].delay(
+      new LiveMarketClient[F](client)
+    )
+}
+
 object MarketClientRequests extends BinanceRestEndpoint {
 
   def depthRequest(symbol: symbols.Symbol,

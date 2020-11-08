@@ -48,6 +48,13 @@ class LiveGeneralClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
       }
 }
 
+object LiveGeneralClient {
+  def make[F[_]: Sync](client: Client[F]): F[GeneralClient[F]] =
+    Sync[F].delay(
+      new LiveGeneralClient[F](client)
+    )
+}
+
 object GeneralClientRequests extends BinanceRestEndpoint {
 
   def pingRequest =
