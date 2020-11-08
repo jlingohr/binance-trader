@@ -4,7 +4,7 @@ import java.time.Instant
 
 import client.domain.orders.http.OrderResponse.OrderListId
 import client.domain.orders.http.{OrderType, Side, TimeInForce}
-import client.domain.params.{OrderId, Price, Quantity}
+import client.domain.params.{OrderId, Price, Quantity, TradeId}
 import org.http4s.QueryParamEncoder
 import client.domain.symbols.Symbol
 
@@ -21,6 +21,7 @@ object QueryParams {
     implicit val orderIdEncoder: QueryParamEncoder[OrderId] = QueryParamEncoder[Long].contramap(_.value)
     implicit val orderListIdEncoder: QueryParamEncoder[OrderListId] = QueryParamEncoder[Long].contramap(_.value)
     implicit val symbolEncoder: QueryParamEncoder[Symbol] = QueryParamEncoder[String].contramap(_.value)
+    implicit val tradeIdEncoder: QueryParamEncoder[TradeId] = QueryParamEncoder[Long].contramap(_.value)
   }
 
 }

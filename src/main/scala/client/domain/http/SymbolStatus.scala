@@ -1,8 +1,10 @@
 package client.domain.http
 
-sealed trait SymbolStatus
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
-object SymbolStatus {
+sealed trait SymbolStatus extends EnumEntry
+
+object SymbolStatus extends Enum[SymbolStatus] with CirceEnum[SymbolStatus] {
 
   final case object PRE_TRADING extends SymbolStatus
   final case object TRADING extends SymbolStatus
@@ -11,5 +13,7 @@ object SymbolStatus {
   final case object HALT extends SymbolStatus
   final case object AUCTION_MATCH extends SymbolStatus
   final case object BREAK extends SymbolStatus
+
+  val values = findValues
 
 }
