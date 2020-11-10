@@ -1,4 +1,4 @@
-package client
+package client.ws
 
 import java.net.http.HttpClient
 import java.net.http.HttpClient.Version

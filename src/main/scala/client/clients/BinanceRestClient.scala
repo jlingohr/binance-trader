@@ -7,6 +7,7 @@ import client.clients.rest.client._
 import client.clients.rest.client.interpreter._
 import org.http4s.client.Client
 
+
 trait BinanceRestClient[F[_]]
 
 object BinanceRestClient {
@@ -16,12 +17,12 @@ object BinanceRestClient {
                                           val tickerClient: TickerClient[F]) extends BinanceRestClient[F]
 
   object PublicClient {
-    def make[F[_]: Sync](client: Client[F]): F[PublicClient[F]] =
-      for {
-        generalClient <- LiveGeneralClient.make[F](client)
-        marketClient <- LiveMarketClient.make[F](client)
-        tickerClient <- LiveTickerClient.make[F](client)
-      } yield new PublicClient[F](generalClient, marketClient, tickerClient)
+    def make[F[_]: Sync](client: Client[F]) = {
+      val generalClient = new LiveGeneralClient[F](client)
+      val marketClient = new LiveMarketClient[F](client)
+      val tickerClient = new LiveTickerClient[F](client)
+      new PublicClient[F](generalClient, marketClient, tickerClient)
+    }
   }
 
   final class SecureClient[F[_]] private (val generalClient: GeneralClient[F],
@@ -41,6 +42,11 @@ object BinanceRestClient {
         ocoClient <- LiveOCOClient.make[F](client, security)
         accountClient <- LiveAccountClient.make[F](client, security)
       } yield new SecureClient[F](generalClient, marketClient, tickerClient, orderClient, ocoClient, accountClient)
+  }
+
+  def mkPublicClient[F[_]: Sync](client: Client[F]) = {
+    PublicClient.make[F](client)
+
   }
 
 }

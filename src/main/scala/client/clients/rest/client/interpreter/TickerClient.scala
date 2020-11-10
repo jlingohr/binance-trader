@@ -1,6 +1,7 @@
 package client.clients.rest.client.interpreter
 
 import cats.effect.Sync
+import cats.implicits._
 import client.clients.rest.BinanceRestEndpoint
 import client.clients.rest.client.{CirceHttpJson, TickerClient}
 import client.domain.http.response
@@ -12,7 +13,6 @@ import org.http4s.Uri
 import org.http4s.circe.JsonDecoder
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import cats.implicits._
 
 class LiveTickerClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
   extends TickerClient[F]

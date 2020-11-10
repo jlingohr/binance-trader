@@ -1,11 +1,6 @@
 package client.domain.orders.http
 
-import java.time.Instant
-
-import client.domain.orders.http.OrderResponse.OrderListId
-import client.domain.params.{OrderId, Price, Quantity}
-import client.domain.symbols.Symbol
-import enumeratum.{CirceEnum, EnumEntry, Enum}
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
 sealed trait OrderStatus extends EnumEntry
 

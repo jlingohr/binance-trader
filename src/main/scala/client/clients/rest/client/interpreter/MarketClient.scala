@@ -3,6 +3,7 @@ package client.clients.rest.client.interpreter
 import java.time.Instant
 
 import cats.effect.Sync
+import cats.implicits._
 import client.clients.rest.BinanceRestEndpoint
 import client.clients.rest.client.{CirceHttpJson, MarketClient}
 import client.domain.depths.depths._
@@ -14,12 +15,11 @@ import client.domain.klines.KlineInterval
 import client.domain.klines.http.klines._
 import client.domain.trades.http.trades._
 import client.domain.{AveragePrice, params, symbols}
+import client.effects.effects.MonadThrow
 import org.http4s.Uri
 import org.http4s.circe.JsonDecoder
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import client.effects.effects.MonadThrow
-import cats.implicits._
 
 class LiveMarketClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
   extends MarketClient[F]
@@ -71,7 +71,7 @@ class LiveMarketClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
                       interval: KlineInterval,
                       startTime: Option[Instant],
                       endTime: Option[Instant],
-                      limit: Int): F[response.BinanceResponse[Result[Seq[Kline]]]] =
+                      limit: Option[Int]): F[response.BinanceResponse[Result[Seq[Kline]]]] =
     klinesRequest(symbol, interval, startTime, endTime, limit)
       .liftTo[F]
       .flatMap { uri =>
@@ -141,7 +141,7 @@ object MarketClientRequests extends BinanceRestEndpoint {
              interval: KlineInterval,
              startTime: Option[Instant],
              endTime: Option[Instant],
-             limit: Int = 500) =
+             limit: Option[Int]) =
     Uri.fromString(baseEndpoint + api + "/klines")
       .map { uri =>
         uri
@@ -149,7 +149,7 @@ object MarketClientRequests extends BinanceRestEndpoint {
           .withQueryParam("interval", interval.value)
           .withOptionQueryParam("startTime", startTime.map(_.toEpochMilli))
           .withOptionQueryParam("endTime", endTime.map(_.toEpochMilli))
-          .withQueryParam("limit", limit)
+          .withOptionQueryParam("limit", limit)
       }
 
   def avgPriceRequest(symbol: symbols.Symbol) =

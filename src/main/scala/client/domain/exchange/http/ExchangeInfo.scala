@@ -5,7 +5,7 @@ import java.time.Instant
 import client.domain.exchange.http.filters.{ExchangeFilter, SymbolFilter}
 import client.domain.http.{RateLimiter, SymbolStatus}
 import client.domain.orders.http.OrderType
-import client.domain.params.{Asset, Permission, Price, Quantity}
+import client.domain.params.{Asset, ExchangePermission}
 import client.domain.symbols
 
 
@@ -26,7 +26,7 @@ object ExchangeInfo {
                             isSpotTradingAllowed: Boolean,
                             isMarginTradingAllowed: Boolean,
                             filters: Seq[SymbolFilter],
-                            permissions: Seq[Permission])
+                            permissions: Seq[ExchangePermission])
 
   case class Info(timezone: String,
                   serverTime: Instant,

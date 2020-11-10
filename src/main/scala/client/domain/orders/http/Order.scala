@@ -1,9 +1,6 @@
 package client.domain.orders.http
 
 import enumeratum.{CirceEnum, Enum, EnumEntry}
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.string.MatchesRegex
-import io.estatico.newtype.macros.newtype
 
 sealed trait OrderType extends EnumEntry
 

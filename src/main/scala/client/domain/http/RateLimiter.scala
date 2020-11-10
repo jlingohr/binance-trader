@@ -1,6 +1,6 @@
 package client.domain.http
 
-import enumeratum.{CirceEnum, EnumEntry, Enum}
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
 sealed trait RateLimitInterval extends EnumEntry
 

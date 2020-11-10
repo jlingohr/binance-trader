@@ -11,7 +11,6 @@ import client.domain.tickers.ws.tickers.{OrderBookUpdateId, SymbolBookTicker, Sy
 import client.domain.trades.ws.trades.{AggTrade, Trade}
 import client.domain.ws.{Event, EventCategory}
 import io.circe.{Decoder, HCursor}
-import io.estatico.newtype.Coercible
 
 trait CirceWSJson extends CirceJson {
 

@@ -1,17 +1,17 @@
 package client.clients.rest.client.interpreter
 
 import cats.effect.Sync
+import cats.implicits._
 import client.clients.rest.BinanceRestEndpoint
 import client.clients.rest.client.{CirceHttpJson, GeneralClient}
 import client.domain.exchange.http.ExchangeInfo
-import client.domain.http.{ServerTime, response}
 import client.domain.http.response.{BinanceResponse, Result}
+import client.domain.http.{ServerTime, response}
+import client.effects.effects.MonadThrow
 import org.http4s.Uri
 import org.http4s.circe.JsonDecoder
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import client.effects.effects.MonadThrow
-import cats.implicits._
 
 class LiveGeneralClient[F[_]: Sync: JsonDecoder: MonadThrow](client: Client[F])
   extends GeneralClient[F]

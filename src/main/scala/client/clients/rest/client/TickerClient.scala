@@ -1,6 +1,5 @@
 package client.clients.rest.client
 
-import client.domain.http.response
 import client.domain.http.response.{BinanceResponse, Result}
 import client.domain.symbols.Symbol
 import client.domain.tickers.http.tickers.{BookTicker, Ticker24Hr, TickerPrice}

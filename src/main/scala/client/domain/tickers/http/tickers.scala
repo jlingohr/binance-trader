@@ -2,7 +2,7 @@ package client.domain.tickers.http
 
 import java.time.Instant
 
-import client.domain.params.{AssetVolume, ChangePercent, Price, Quantity, TradeId}
+import client.domain.params._
 import client.domain.symbols.Symbol
 
 object tickers {

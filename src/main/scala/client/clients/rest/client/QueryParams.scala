@@ -5,8 +5,8 @@ import java.time.Instant
 import client.domain.orders.http.OrderResponse.OrderListId
 import client.domain.orders.http.{OrderType, Side, TimeInForce}
 import client.domain.params.{OrderId, Price, Quantity, TradeId}
-import org.http4s.QueryParamEncoder
 import client.domain.symbols.Symbol
+import org.http4s.QueryParamEncoder
 
 object QueryParams {
 

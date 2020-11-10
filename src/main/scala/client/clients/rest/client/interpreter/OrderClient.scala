@@ -3,6 +3,7 @@ package client.clients.rest.client.interpreter
 import java.time.Instant
 
 import cats.effect.Sync
+import cats.implicits._
 import client.algebra.SecurityService
 import client.clients.rest.BinanceRestEndpoint
 import client.clients.rest.client.{CirceHttpJson, OrderClient}
@@ -14,11 +15,10 @@ import client.domain.params.OrderId
 import client.domain.symbols.Symbol
 import client.domain.{params, symbols}
 import client.effects.effects.MonadThrow
-import org.http4s.{Request, Uri}
 import org.http4s.circe.JsonDecoder
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import cats.implicits._
+import org.http4s.{Request, Uri}
 
 class LiveOrderClient[F[_]: Sync: JsonDecoder: MonadThrow] (client: Client[F], security: SecurityService)
   extends OrderClient[F]

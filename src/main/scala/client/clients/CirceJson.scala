@@ -3,10 +3,11 @@ package client.clients
 import java.time.Instant
 
 import client.domain.depths.depths.{Ask, Bid}
-import client.domain.params.{Asset, AssetVolume, ChangePercent, ClientOrderId, OrderId, Price, Quantity, TradeId, UpdateId}
+import client.domain.params._
 import client.domain.symbols.Symbol
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder, HCursor}
+
+import scala.util.Try
 
 trait CirceJson {
 
@@ -40,7 +41,9 @@ trait CirceJson {
 
   implicit val clientOrderIdDecoder: Decoder[ClientOrderId] = Decoder[String].map(ClientOrderId.apply)
 
-  implicit val instantDecode: Decoder[Instant] = deriveDecoder[Instant]
-  implicit val instantEncoder: Encoder[Instant] = deriveEncoder[Instant]
+  implicit val instantDecode: Decoder[Instant] = Decoder.decodeString.emapTry {
+    str => Try(Instant.parse(str))
+  }
+  implicit val instantEncoder: Encoder[Instant] = Encoder.encodeString.contramap[Instant](_.toString)
 
 }

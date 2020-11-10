@@ -1,6 +1,6 @@
 package client.domain.klines
 
-import enumeratum.{CirceEnum, EnumEntry, Enum}
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
 sealed abstract class KlineInterval(val value: String) extends EnumEntry
 

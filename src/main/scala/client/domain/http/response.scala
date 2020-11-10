@@ -2,12 +2,12 @@ package client.domain.http
 
 import cats.Show
 import cats.effect.Sync
+import cats.implicits._
 import client.domain.http.response.BinanceError.{ApiError, DecodeError}
 import io.circe.Decoder
-import org.http4s.{DecodeFailure, Headers, Response, Status}
 import org.http4s.circe.CirceEntityDecoder._
-import cats.implicits._
 import org.http4s.util.CaseInsensitiveString
+import org.http4s.{DecodeFailure, Headers, Response, Status}
 
 
 object response {
@@ -17,6 +17,12 @@ object response {
   object BinanceResponseError {
     implicit val show: Show[BinanceResponseError] = (t: BinanceResponseError) =>
       s"${t.code} - ${t.message}: ${t.description.getOrElse("")}"
+
+    implicit val binanceErrorDecoder: Decoder[BinanceResponseError] = Decoder.forProduct3(
+      "code",
+      "msg",
+      "dsc"
+    )(BinanceResponseError.apply)
   }
 
   sealed abstract class BinanceError(message: String, cause: Throwable = None.orNull) extends Exception(message, cause)

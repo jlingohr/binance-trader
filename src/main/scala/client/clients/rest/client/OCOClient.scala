@@ -5,7 +5,7 @@ import java.time.Instant
 import client.domain.http.response.{BinanceResponse, Result}
 import client.domain.orders.http.OCOOrderResponse.{CancelOCO, OCOOrder}
 import client.domain.orders.http.OrderResponse.OrderListId
-import client.domain.orders.http.{OCOOptions, Side, TimeInForce}
+import client.domain.orders.http.{Side, TimeInForce}
 import client.domain.params.{OrderId, Price, Quantity}
 import client.domain.symbols.Symbol
 

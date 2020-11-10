@@ -1,6 +1,6 @@
 package client.domain.orders.http
 
-import enumeratum.{CirceEnum, EnumEntry, Enum}
+import enumeratum.{CirceEnum, Enum, EnumEntry}
 
 sealed trait ListStatusType extends EnumEntry
 

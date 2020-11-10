@@ -1,7 +1,6 @@
 package client.domain.depths.http
 
 import enumeratum.values.{IntEnum, IntEnumEntry}
-import io.estatico.newtype.macros.newtype
 
 sealed abstract class DepthLimit(override val value: Int) extends IntEnumEntry
 

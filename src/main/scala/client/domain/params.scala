@@ -24,6 +24,6 @@ object params {
 
   @newtype case class Asset(value: String)
 
-  @newtype case class Permission(value: String)
+  @newtype case class ExchangePermission(value: String)
 
 }

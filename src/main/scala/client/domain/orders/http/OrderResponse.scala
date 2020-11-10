@@ -2,7 +2,7 @@ package client.domain.orders.http
 
 import java.time.Instant
 
-import client.domain.params.{ClientOrderId, OrderId, Price, Quantity, TradeId}
+import client.domain.params._
 import client.domain.symbols.Symbol
 import io.estatico.newtype.macros.newtype
 

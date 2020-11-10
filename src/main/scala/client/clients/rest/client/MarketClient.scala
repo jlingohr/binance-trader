@@ -16,21 +16,21 @@ import client.domain.trades.http.trades.{AggTrade, Trade}
 trait MarketClient[F[_]] {
   def depth(symbol: Symbol, limit: DepthLimit = Depth100): F[BinanceResponse[Result[PartialDepthUpdate]]]
 
-  def trades(symbol: Symbol, limit: Option[Int]): F[BinanceResponse[Result[Seq[Trade]]]]
+  def trades(symbol: Symbol, limit: Option[Int] = None): F[BinanceResponse[Result[Seq[Trade]]]]
 
   def historicalTrades(symbol: Symbol, limit: Option[Int], fromId: Option[TradeId]): F[BinanceResponse[Result[Trade]]]
 
   def aggTrades(symbol: Symbol,
-                fromId: Option[TradeId],
-                startTime: Option[Instant],
-                endTime: Option[Instant],
-                limit: Option[Int]): F[BinanceResponse[Result[Seq[AggTrade]]]]
+                fromId: Option[TradeId] = None,
+                startTime: Option[Instant] = None,
+                endTime: Option[Instant] = None,
+                limit: Option[Int] = None): F[BinanceResponse[Result[Seq[AggTrade]]]]
 
   def klines(symbol: Symbol,
              interval: KlineInterval,
-             startTime: Option[Instant],
-             endTime: Option[Instant],
-             limit: Int = 500): F[BinanceResponse[Result[Seq[Kline]]]]
+             startTime: Option[Instant] = None,
+             endTime: Option[Instant] = None,
+             limit: Option[Int] = None): F[BinanceResponse[Result[Seq[Kline]]]]
 
   def avgPrice(symbol: Symbol): F[BinanceResponse[Result[AveragePrice]]]
 }

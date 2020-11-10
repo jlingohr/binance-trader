@@ -2,9 +2,9 @@ package client.domain.account.http
 
 import java.time.Instant
 
-import client.domain.account.http.Account.{AccountType, Balance, Permission}
+import client.domain.account.http.Account.{AccountPermission, AccountType, Balance}
 import client.domain.orders.http.OrderResponse.{CommissionAsset, OrderListId}
-import client.domain.params.{Commission, OrderId, Price, Quantity, TradeId}
+import client.domain.params._
 import client.domain.symbols.Symbol
 
 object AccountResponse {
@@ -19,7 +19,7 @@ object AccountResponse {
                                updateTime: Instant,
                                accountType: AccountType,
                                balance: Seq[Balance],
-                               permissions: Seq[Permission])
+                               permissions: Seq[AccountPermission])
 
   case class AccountTrade(symbol: Symbol,
                          id: TradeId,

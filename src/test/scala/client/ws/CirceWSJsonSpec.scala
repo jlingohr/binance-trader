@@ -1,17 +1,17 @@
-package client
+package client.ws
 
-import org.scalatest.funspec.AnyFunSpec
 import java.time.Instant
 
 import client.clients.websocket.CirceWSJson
 import client.domain.depths.depths.{Ask, Bid, PartialDepthUpdate}
-import io.circe.parser._
-import client.domain.params.{AssetVolume, OrderId, Price, Quantity, TradeId, UpdateId}
 import client.domain.klines.ws.klines.{Kline, KlineEvent, KlineInterval}
+import client.domain.params._
 import client.domain.symbols.Symbol
-import client.domain.ws.Event
 import client.domain.tickers.ws.tickers.{OrderBookUpdateId, SymbolBookTicker, SymbolMiniTicker}
 import client.domain.trades.ws.trades.{AggTrade, Trade}
+import client.domain.ws.Event
+import io.circe.parser._
+import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
 

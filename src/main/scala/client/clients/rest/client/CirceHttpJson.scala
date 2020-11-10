@@ -2,19 +2,19 @@ package client.clients.rest.client
 
 import client.clients.CirceJson
 import client.domain.AveragePrice
-import client.domain.account.http.Account.{AccountType, Balance, Permission}
+import client.domain.account.http.Account.{AccountPermission, AccountType, Balance}
 import client.domain.account.http.AccountResponse.AccountInformation
 import client.domain.depths.depths.{Ask, Bid, PartialDepthUpdate}
 import client.domain.exchange.http.ExchangeInfo.{ExchangeSymbol, Info}
 import client.domain.exchange.http.filters.ExchangeFilter.{ExchangeMaxNumAlgoOrders, ExchangeMaxNumOrders}
 import client.domain.exchange.http.filters.SymbolFilter._
 import client.domain.exchange.http.filters.{ExchangeFilter, SymbolFilter}
-import client.domain.http.response.BinanceResponseError
-import client.domain.http.{RateLimiter, ServerTime}
+import client.domain.http.{RateLimiter, ServerTime, SymbolStatus}
 import client.domain.klines.http.klines.Kline
 import client.domain.orders.http.OCOOrderResponse.{CancelOCO, OCODetail, OCOOrder, OCOReport}
 import client.domain.orders.http.OrderResponse._
-import client.domain.params.{Asset, Commission, UpdateId}
+import client.domain.orders.http.OrderType
+import client.domain.params.{Asset, Commission, ExchangePermission, UpdateId}
 import client.domain.tickers.http.tickers.{BookTicker, Ticker24Hr, TickerPrice}
 import client.domain.trades.http.trades.{AggTrade, Trade}
 import io.circe.generic.semiauto.deriveDecoder
@@ -22,11 +22,11 @@ import io.circe.{Decoder, HCursor}
 
 trait CirceHttpJson extends CirceJson {
 
-  implicit val binanceErrorDecoder: Decoder[BinanceResponseError] = Decoder.forProduct3(
-    "code",
-    "msg",
-    "dsc"
-  )(BinanceResponseError.apply)
+//  implicit val binanceErrorDecoder: Decoder[BinanceResponseError] = Decoder.forProduct3(
+//    "code",
+//    "msg",
+//    "dsc"
+//  )(BinanceResponseError.apply)
 
   implicit val orderListIdDecoder: Decoder[OrderListId] = Decoder[Long].map(OrderListId.apply)
 
@@ -97,7 +97,9 @@ trait CirceHttpJson extends CirceJson {
 
   implicit val accountTypeDecoder: Decoder[AccountType] = Decoder[String].map(AccountType.apply)
 
-  implicit val permissionDecoder: Decoder[Permission] = Decoder[String].map(Permission.apply)
+  implicit val accountPermissionDecoder: Decoder[AccountPermission] = Decoder[String].map(AccountPermission.apply)
+
+  implicit val exchangePermissionDecoder: Decoder[ExchangePermission] = Decoder[String].map(ExchangePermission.apply)
 
   implicit val balanceDecoder: Decoder[Balance] = deriveDecoder
 
@@ -156,11 +158,32 @@ trait CirceHttpJson extends CirceJson {
     }
   }
 
-  implicit val exchangeSymbolDecoder: Decoder[ExchangeSymbol] = deriveDecoder
+  implicit val orderTypeDecoder: Decoder[OrderType] = deriveDecoder[OrderType]
+
+  implicit val symbolStatusDecoder: Decoder[SymbolStatus] = deriveDecoder[SymbolStatus]
+
+  implicit val exchangeSymbolDecoder: Decoder[ExchangeSymbol] = Decoder.forProduct16(
+    "symbol",
+    "status",
+    "baseAsset",
+    "baseAssetPrecision",
+    "quoteAsset",
+    "quotePrecision",
+    "baseCommissionPrecision",
+    "quoteCommissionPrecision",
+    "orderTypes",
+    "icebergAllowed",
+    "ocoAllowed",
+    "quoteOrderQtyMarketAllowed",
+    "isSpotTradingAllowed",
+    "isMarginTradingAllowed",
+    "filters",
+    "permissions"
+  )(ExchangeSymbol.apply)
 
   implicit val serverInfoDecoder: Decoder[Info] = deriveDecoder
 
-  implicit val commissionDecoder: Decoder[Commission] = deriveDecoder
+  implicit val commissionDecoder: Decoder[Commission] = Decoder[Long].map(Commission.apply)
 
   implicit val accountInfoDecoder: Decoder[AccountInformation] = deriveDecoder
 
